@@ -31,7 +31,11 @@ public class ProjectLifetimeScope : LifetimeScope
 {
     protected override void Configure(IContainerBuilder builder)
     {
-        BetterSceneManagerConfigurator.Initialize(builder, messagePipeOptions);
+        // 메시지 파이프 등록
+        var messagePipeOption = builder.RegisterMessagePipe(pipeOptions => { pipeOptions.EnableCaptureStackTrace = true; });
+        builder.RegisterBuildCallback(c => GlobalMessagePipe.SetProvider(c.AsServiceProvider()));
+
+        BetterSceneManagerConfigurator.Initialize(builder, messagePipeOption);
     }
 }
 ```
