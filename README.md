@@ -19,6 +19,7 @@ BetterForNothing은 Unity UGUI 기반 UI라이브러리입니다.
 3. MessagePipe
 4. ZString
 5. R3
+6. Odin Inspector and Serializer
 
 ## 3. 시작하기
 
