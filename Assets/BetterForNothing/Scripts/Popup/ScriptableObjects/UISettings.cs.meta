@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 187f90cbec3db45238c3bcc4df9bff62
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - modalPopupPrefab: {fileID: 5978122290318209261, guid: 0a91942a6e0b744029a23353cd07ffc4, type: 3}
+  - primaryButtonPrefab: {fileID: 8835359413234663793, guid: b0d97a614aa6e4a9295adcbbcf031f0f, type: 3}
+  - secondaryButtonPrefab: {fileID: 5676917980878005967, guid: e6468c3a304414b99b1ee4e41ff0ef16, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
