@@ -13,6 +13,7 @@ namespace BetterForNothing.Scripts.Loading.handler
         public FakeLoadingHandler(float weight, float duration, string message)
         {
             Debug.Assert(duration > 0, "duration is not positive.");
+            Debug.Assert(weight > 0, "weight is not positive.");
 
             Weight = weight;
             _duration = duration;
@@ -21,7 +22,7 @@ namespace BetterForNothing.Scripts.Loading.handler
 
         public float Weight { get; }
 
-        public async UniTask ExecuteAsync(uint index, BetterSceneManager manager)
+        public async UniTask ExecuteAsync(uint index)
         {
             // Smoothing out the loading process every frame
             var elapsedTime = 0.0f;

@@ -22,12 +22,12 @@ namespace BetterForNothing.Scripts.Loading
             progressManager.Configure(stepsWeight);
         }
 
-        public async UniTask ExecutePipeline(BetterSceneManager manager)
+        public async UniTask ExecutePipeline()
         {
             uint index = 0;
             foreach (var handler in _handlers)
             {
-                await handler.ExecuteAsync(index, manager);
+                await handler.ExecuteAsync(index);
                 index++;
 
                 // dispose handler

@@ -22,7 +22,7 @@ namespace BetterForNothing.Scripts.Loading.handler
         public int Order { get; }
         public float Weight { get; }
 
-        public async UniTask ExecuteAsync(uint index, BetterSceneManager manager)
+        public async UniTask ExecuteAsync(uint index)
         {
             Debug.Log("Loading additional resources...");
 

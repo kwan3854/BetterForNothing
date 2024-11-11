@@ -106,7 +106,7 @@ namespace BetterForNothing.Scripts
             var pipeline = new SceneLoadPipeline(sceneLoadRequest.Handlers);
             _container.Inject(pipeline);
             CurrentSceneLoadRequest = sceneLoadRequest;
-            await pipeline.ExecutePipeline(this);
+            await pipeline.ExecutePipeline();
         }
     }
 }

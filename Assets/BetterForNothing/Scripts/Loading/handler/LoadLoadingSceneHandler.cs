@@ -12,6 +12,7 @@ namespace BetterForNothing.Scripts.Loading.handler
 
         private LoadingProgressManager _progressManager;
         private UIManager _uiManager;
+        private BetterSceneManager _betterSceneManager;
 
         // Constructor for manual instantiation
         public LoadLoadingSceneHandler(float weight, string message)
@@ -23,9 +24,9 @@ namespace BetterForNothing.Scripts.Loading.handler
 
         public float Weight { get; }
 
-        public async UniTask ExecuteAsync(uint index, BetterSceneManager manager)
+        public async UniTask ExecuteAsync(uint index)
         {
-            var loadingSceneName = manager.CurrentSceneLoadRequest.LoadingSceneName;
+            var loadingSceneName = _betterSceneManager.CurrentSceneLoadRequest.LoadingSceneName;
 
             var popup = _uiManager.BuildLoadingPopup();
             await popup.Show();
@@ -45,7 +46,8 @@ namespace BetterForNothing.Scripts.Loading.handler
         [Inject]
         public void Inject(
             LoadingProgressManager progressManager,
-            UIManager uiManager
+            UIManager uiManager,
+            BetterSceneManager betterSceneManager
         )
         {
             Debug.Assert(progressManager != null, "progressManager is null.");
@@ -53,6 +55,7 @@ namespace BetterForNothing.Scripts.Loading.handler
 
             _progressManager = progressManager;
             _uiManager = uiManager;
+            _betterSceneManager = betterSceneManager;
         }
     }
 }

@@ -9,6 +9,7 @@ namespace BetterForNothing.Scripts.Loading.handler
     {
         private readonly string _message;
         private LoadingProgressManager _progressManager;
+        private BetterSceneManager _betterSceneManager;
 
         public LoadTargetSceneHandler(float weight, string message)
         {
@@ -20,9 +21,9 @@ namespace BetterForNothing.Scripts.Loading.handler
 
         public float Weight { get; }
 
-        public async UniTask ExecuteAsync(uint index, BetterSceneManager manager)
+        public async UniTask ExecuteAsync(uint index)
         {
-            var targetSceneName = manager.CurrentSceneLoadRequest.TargetSceneName; // Get target scene name
+            var targetSceneName = _betterSceneManager.CurrentSceneLoadRequest.TargetSceneName; // Get target scene name
 
             _progressManager.UpdateStepProgress(index, 0.0f); // Update progress to 0%
             _progressManager.UpdateStepMessage(index, _message); // Update message
@@ -46,11 +47,12 @@ namespace BetterForNothing.Scripts.Loading.handler
         }
 
         [Inject]
-        public void Inject(LoadingProgressManager progressManager)
+        public void Inject(LoadingProgressManager progressManager, BetterSceneManager manager)
         {
             // Validate injected dependencies
             Debug.Assert(progressManager != null, "progressManager is null.");
             _progressManager = progressManager;
+            _betterSceneManager = manager;
         }
     }
 }

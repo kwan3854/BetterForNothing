@@ -42,13 +42,13 @@ namespace BetterForNothing.Scripts
 
         public LoadingPopup BuildLoadingPopup()
         {
-            var loadingPopup = _container.Instantiate(UISettings.loadingPopupPrefab).GetComponent<LoadingPopup>();
+            var loadingPopup = _container.Instantiate(UISettings.loadingPopupPrefab);
             return loadingPopup;
         }
 
         public ModalPopup BuildModalPopup(string message, IEnumerable<ModalButton> buttons)
         {
-            var modalPopup = _container.Instantiate(UISettings.modalPopupPrefab).GetComponent<ModalPopup>();
+            var modalPopup = _container.Instantiate(UISettings.modalPopupPrefab);
             modalPopup.SetMessage(message);
             modalPopup.SetButtons(buttons);
 
@@ -100,7 +100,7 @@ namespace BetterForNothing.Scripts
         
         public void ClearAllModalPopups()
         {
-            var ddolObjects = DontDestroyOnLoadAccessor.Instance.GetAllRootsOfDontDestroyOnLoad();
+            GameObject[] ddolObjects = DontDestroyOnLoadAccessor.Instance.GetAllRootsOfDontDestroyOnLoad();
             
             // Find all modal popups even in children
             foreach (var ddolObject in ddolObjects)

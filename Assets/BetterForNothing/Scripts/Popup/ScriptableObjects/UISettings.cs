@@ -9,9 +9,9 @@ namespace BetterForNothing.Scripts.Popup.ScriptableObjects
     [CreateAssetMenu(fileName = "UISettings", menuName = "ScriptableObjects/UISettings", order = 1)]
     public class UISettings : SerializedScriptableObject
     {
-        [Title("Loading Popup Prefab")] public GameObject loadingPopupPrefab;
+        [Title("Loading Popup Prefab")] public LoadingPopup loadingPopupPrefab;
 
-        [Title("Modal Popup Prefab")] public GameObject modalPopupPrefab;
+        [Title("Modal Popup Prefab")] public ModalPopup modalPopupPrefab;
 
         [Title("Modal Button Prefabs")] [SerializeField]
         private Dictionary<ModalButtonType, ModalButtonComponent> modalButtonPrefabs;

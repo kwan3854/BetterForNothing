@@ -19,7 +19,8 @@ BetterForNothing은 Unity UGUI 기반 UI라이브러리입니다.
 3. MessagePipe
 4. ZString
 5. R3
-6. Odin Inspector and Serializer
+6. **Odin Inspector and Serializer (유료)**
+7. **DOTween (부분유료)**
 
 ## 3. 시작하기
 
@@ -132,6 +133,8 @@ private async void Start()
 
 ### 3. 중간 로딩 씬을 거쳐 씬 이동
 
+> `씬1` -> `로딩씬`(씬로딩, 추가 작업 등등의 진행 상황 표시 가능) -> `씬2`
+
 #### 씬 이동 시작 예시
 
 ```c#
@@ -153,6 +156,7 @@ private void LoadSelectionScene()
     // 로딩 씬을 로딩하는데 20%
     // 데이터를 로딩하는데 60%
     // 타겟 씬을 로딩하는데 20% 의 비율이 할당된다.
+    // 이 비율은 UnifiedLoadProgressMessage에 반영된다.
     var handlers = new List<ILoadingHandler>
     {
         new LoadLoadingSceneHandler(0.2f,
@@ -254,11 +258,160 @@ private async void Start()
 
 `UISettings` ScriptableObject에 설정해둔 오디오 클립을 index(int)기반으로 로드 가능. (각 인덱스를 Enum으로 선언해 두고 사용하길 권장.)
 
+```c#
+private UIManager _uiManager;
+
+[Inject]
+public void Construct(UIManager uiManager)
+{
+    _uiManager = uiManager;
+}
+
+private void Start()
+{
+    int clickSoundIndex = 1;
+    AudioClip clickAudioClip = _uiManager.GetUISoundByIndex(clickSoundIndex)
+}
+```
+
+
+
 ### 6. 글로벌 AudioClip을 글로벌 AudioSource에서 Play
 
 글로벌 AudioSource는 DontDestroyOnLoad 씬에 위치하며, 특정 씬의 로드, 언로드 상태와 관계없이 항상 존재하므로 씬의 상태와 관계 없이 독립적으로 음원 재생이 필요할 때 유용.
 
+```c#
+private UIManager _uiManager;
+
+[Inject]
+public void Construct(UIManager uiManager)
+{
+    _uiManager = uiManager;
+}
+
+private void Start()
+{
+    int clickSoundIndex = 1;
+    _uiManager.PlaySoundOnGlobal(clickSoundIndex)
+}
+```
+
+```c#
+// 인덱스를 enum으로 관리하기를 권장.
+public enum GlobalSoundType
+{
+    ButtonClick = 1,
+    Warning = 2,
+}
+
+_uiManager.PlaySoundOnGlobal((int)GlobalSoundType.ButtonClick)
+```
+
+
+
 ### 7. DontDestroyOnLoad 씬의 오브젝트를 자유롭게 Fetch.
 
 DontDestroyOnLoad 씬의 최상위 오브젝트들과, 특정 오브젝트들을 가져올 수 있는 Helper 클래스 존재.
+
+```c#
+GameObject[] ddolObjects = DontDestroyOnLoadAccessor
+                                            .Instance
+                                            .GetAllRootsOfDontDestroyOnLoad();
+```
+
+
+
+## 4. UISettings
+
+### 생성 및 설정 방법
+
+1. Project 창에서 Assets/Resources 의 최상위 폴더로 이동.
+2.  `Create` -> `ScriptableObjects` -> `UISettings` 클릭
+3. UI 프리펩 등록.
+
+![UISettings](Docs/Images/UISettings.png)
+
+## 5. ILoadingHandler 인터페이스를 이용한 커스텀 로딩씬 작업 만들기
+
+게임이나 앱에서 많은 작업이 미리 이루어져야 하는 경우들이 있다. 예를들어 리소스 다운로드, 어드레서블 디펜던시를 미리 로드 등등...
+
+이를 `3. 중간 로딩 씬을 거쳐 씬 이동` 에서 사용할 수 있는 형태로 커스텀해서 나만의 작업을 추가할 수 있다.
+
+```c#
+public interface ILoadingHandler
+{
+    float Weight { get; }
+    UniTask ExecuteAsync(uint index);
+}
+```
+
+위의 ILoadingHandler 인터페이스를 이용한다.
+
+예시로 시간에 따른 가짜 로딩 작업을 만들어 보자.
+
+```c#
+public class FakeLoadingHandler : ILoadingHandler
+{
+    private readonly float _duration;
+    private readonly string _message;
+    private LoadingProgressManager _progressManager;
+  
+    [Inject]
+    public void Inject(LoadingProgressManager progressManager)
+    {
+        _progressManager = progressManager;
+    }
+
+    public FakeLoadingHandler(float weight, float duration, string message)
+    {
+        Debug.Assert(duration > 0, "duration is not positive.");
+        Debug.Assert(weight > 0, "weight is not positive.");
+
+        Weight = weight;
+        _duration = duration;
+        _message = message;
+    }
+
+    public float Weight { get; }
+
+    public async UniTask ExecuteAsync(uint index)
+    {
+        // Smoothing out the loading process every frame
+        var elapsedTime = 0.0f;
+
+        _progressManager.UpdateStepProgress(index, 0.0f);
+        _progressManager.UpdateStepMessage(index, _message);
+
+        while (elapsedTime < _duration)
+        {
+            _progressManager.UpdateStepProgress(index, elapsedTime / _duration);
+            elapsedTime += Time.deltaTime;
+            await UniTask.Yield();
+        }
+
+        _progressManager.UpdateStepProgress(index, 1.0f);
+    }
+}
+```
+
+이렇게 만들어진 가짜 로딩 작업은 이런식으로 사용 가능하다.
+
+```c#
+var handlers = new List<ILoadingHandler>
+{
+    new LoadLoadingSceneHandler(0.2f,
+        "화면을 불러오는 중..."),
+    new FakeLoadingHandler(0.6f, 10f,
+        "데이터를 불러오는 중..."),
+    new LoadTargetSceneHandler(0.2f,
+        "씬을 로딩하는 중...")
+};
+
+_loadScenePublisher.Publish(
+    new SceneLoadRequest(
+        "TargetScene",
+        "LoadingScene",
+        _containerToResolveHandlers,
+        handlers));
+```
 
