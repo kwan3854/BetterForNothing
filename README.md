@@ -224,6 +224,8 @@ public class LoadingScenePresenter : MonoBehaviour, IDisposable
 
 ### 4. ENUM을 이용한 씬 관리
 
+### 기본
+
 ```c#
 public class BetterSceneManager
 {
@@ -251,6 +253,38 @@ private async void Start()
     
     // 로딩 팝업 실행 없이 씬 로드.
     await _betterSceneManager.LoadSceneAdditive(SceneName.Scene1, false);
+}
+```
+
+### 씬스태킹 시 최상위 씬 변경 이벤트
+
+```c#
+public class BetterSceneManager
+{
+    public event Action<SceneName> OnTopSceneChanged;
+}
+```
+
+```c#
+private BetterSceneManager _betterSceneManager;
+
+[Inject]
+public void Construct(BetterSceneManager betterSceneManager)
+{
+    _betterSceneManager = betterSceneManager;
+}
+
+private async void Awake()
+{
+    _betterSceneManager.OnTopSceneChanged += OnTopSceneChanged;
+}
+
+private async void OnTopSceneChanged(SceneName sceneName)
+{
+    if (sceneName == SceneName.ExampleScene)
+    {
+        Debug.Log("ExampleScene 이 최상위 씬으로 변경되었습니다.")
+    }
 }
 ```
 
