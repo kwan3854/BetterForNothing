@@ -51,12 +51,12 @@ public class ProjectLifetimeScope : LifetimeScope
 ```c#
 public class ExamplePresenter : MonoBehaviour
 {
-    private BetterSceneManager _betterSceneManager;
+    private UIManager _uiManager;
 
     [Inject]
-    public void Constuct(BetterSceneManager betterSceneManager)
+    public void Constuct(UIManager uiManager)
     {
-        _betterSceneManager = betterSceneManager;
+        _uiManager = betterSceneManager;
     }
 
     private async void Start()
@@ -93,12 +93,12 @@ private async void Start()
 ```c#
 public class ExamplePresenter : MonoBehaviour
 {
-    private BetterSceneManager _betterSceneManager;
+    private UIManager _uiManager;
 
     [Inject]
-    public void Constuct(BetterSceneManager betterSceneManager)
+    public void Constuct(UIManager uiManager)
     {
-        _betterSceneManager = betterSceneManager;
+        _uiManager = betterSceneManager;
     }
 
     private async void Start()
