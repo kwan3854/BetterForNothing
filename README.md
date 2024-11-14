@@ -56,7 +56,7 @@ public class ExamplePresenter : MonoBehaviour
     [Inject]
     public void Constuct(UIManager uiManager)
     {
-        _uiManager = betterSceneManager;
+        _uiManager = uiManager;
     }
 
     private async void Start()
@@ -98,7 +98,7 @@ public class ExamplePresenter : MonoBehaviour
     [Inject]
     public void Constuct(UIManager uiManager)
     {
-        _uiManager = betterSceneManager;
+        _uiManager = uiManager;
     }
 
     private async void Start()
